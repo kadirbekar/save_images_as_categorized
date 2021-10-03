@@ -4,17 +4,25 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:save_images_as_categorized/view/home_page.dart';
 
 void main() {
-  
   WidgetsFlutterBinding.ensureInitialized();
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setPreferredOrientations(
+    [
+      DeviceOrientation.portraitUp,
+    ],
+  );
 
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-  ));
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+    ),
+  );
 
-  runApp(const CategorizedImages());
+  runApp(
+    const CategorizedImages(),
+  );
 }
+
 class CategorizedImages extends StatelessWidget {
   const CategorizedImages({
     Key? key,
@@ -23,8 +31,8 @@ class CategorizedImages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: GoogleFonts.roboto().fontFamily),
-      title: 'Material App',
+      theme: ThemeData(fontFamily: GoogleFonts.montserrat().fontFamily),
+      title: 'Categorized Images',
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
     );

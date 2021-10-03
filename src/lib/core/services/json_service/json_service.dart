@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:save_images_as_categorized/core/models/category_model.dart';
 
-class JsonService {
+class LocalJsonDataService {
 
-  static JsonService get instance => JsonService._initialize();
+  static LocalJsonDataService get instance => LocalJsonDataService._initialize();
   final String _localJsonPath = "assets/json/categories.json";
 
   Future<List<CategoryModel>> loadCategorieJsonFromAssets() async {
@@ -15,5 +15,5 @@ class JsonService {
     return _categoryList;
   }
 
-  JsonService._initialize();
+  LocalJsonDataService._initialize();
 }
