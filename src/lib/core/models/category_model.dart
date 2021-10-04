@@ -5,7 +5,7 @@ class CategoryModel {
   final int? id;
   final String? name;
   final String? bannerUrl;
-  final List<Image>? images;
+  final List<ImageModel>? images;
 
   const CategoryModel({
     @required this.id,
@@ -18,9 +18,9 @@ class CategoryModel {
         id: json["id"],
         name: json["name"],
         bannerUrl: json["bannerUrl"],
-        images: List<Image>.from(
+        images: List<ImageModel>.from(
           json["images"].map(
-            (x) => Image.fromJson(x),
+            (x) => ImageModel.fromJson(x),
           ),
         ),
       );
@@ -36,17 +36,17 @@ class CategoryModel {
       };
 }
 
-class Image {
+class ImageModel {
   
   final String? path;
   final String? addedDate;
 
-  const Image({
+  const ImageModel({
     this.path,
     this.addedDate,
   });
 
-  factory Image.fromJson(Map<String, dynamic> json) => Image(
+  factory ImageModel.fromJson(Map<String, dynamic> json) => ImageModel(
         path: json["path"],
         addedDate: json["addedDate"],
       );

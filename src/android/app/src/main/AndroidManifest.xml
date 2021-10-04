@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.save_images_as_categorized">
    <application
-        android:label="save_images_as_categorized"
+        android:label="Categorized Images"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

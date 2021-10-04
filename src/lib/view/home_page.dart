@@ -5,6 +5,7 @@ import 'package:save_images_as_categorized/core/constants/design_constants.dart'
 import 'package:save_images_as_categorized/core/models/category_model.dart';
 import 'package:save_images_as_categorized/core/reusable_widgets/busy_state.dart';
 import 'package:save_images_as_categorized/core/services/json_service/json_service.dart';
+import 'package:save_images_as_categorized/view/category_detail.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -80,8 +81,11 @@ class _ImageCardList extends StatelessWidget {
         BuildContext context,
         int index,
       ) {
-        return _ImageCard(
-          category: _categories![index]!,
+        return InkWell(
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoryDetail())),
+          child: _ImageCard(
+            category: _categories![index]!,
+          ),
         );
       },
       staggeredTileBuilder: (int index) => StaggeredTile.count(
