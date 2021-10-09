@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:save_images_as_categorized/core/constants/string_constants.dart';
 import 'package:save_images_as_categorized/core/services/local_storage/hive_manager.dart';
 import 'package:save_images_as_categorized/view/home_page.dart';
 
@@ -34,8 +35,10 @@ class CategorizedImages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: GoogleFonts.montserrat().fontFamily),
-      title: 'Categorized Images',
+      theme: ThemeData(
+        fontFamily: GoogleFonts.montserrat().fontFamily,
+      ),
+      title: StringConstants.mainTitle,
       debugShowCheckedModeBanner: false,
       home: const HomePage(),
     );

@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:save_images_as_categorized/core/constants/design_constants.dart';
+import 'package:save_images_as_categorized/core/constants/string_constants.dart';
+import 'package:save_images_as_categorized/core/extensions/context_extension.dart';
 import 'package:save_images_as_categorized/core/models/category_model.dart';
 import 'package:save_images_as_categorized/core/reusable_widgets/busy_state.dart';
 import 'package:save_images_as_categorized/core/services/json_service/json_service.dart';
@@ -15,26 +17,24 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List<CategoryModel?>? _categories;
+  late List<CategoryModel?>? _imageCategoryList;
 
   @override
   void initState() {
     super.initState();
-    _categories = [];
+    _imageCategoryList = [];
     _runAsyncMethod();
   }
 
   _runAsyncMethod() async {
-    final _categoryList = await _loadCategories();
-    updateStateIfMounted(() => _categories = _categoryList);
+    final _categoryList = await _loadCategoryList();
+    _updateStateIfMounted(() => _imageCategoryList = _categoryList);
   }
 
-  updateStateIfMounted(f) {
-    if (mounted) setState(f);
-  }
-
-  _loadCategories() async =>
+  _loadCategoryList() async =>
       await LocalJsonDataService.instance.loadCategorieJsonFromAssets();
+
+  _updateStateIfMounted(f) => mounted ? setState(f) : null;
 
   @override
   Widget build(BuildContext context) {
@@ -43,19 +43,17 @@ class _HomePageState extends State<HomePage> {
       centerTitle: true,
       backgroundColor: Colors.green,
       title: const Text(
-        "Categorized Images",
+        StringConstants.mainTitle,
       ),
     );
 
     return Scaffold(
       appBar: _appbar,
-      body: _categories!.isNotEmpty
-          ? Container(
-              color: Colors.green,
-              child: _ImageCardList(
-                categories: _categories,
-              ),
-            )
+      backgroundColor: Colors.green,
+      body: _imageCategoryList!.isNotEmpty
+          ? _ImageCardList(
+            categories: _imageCategoryList,
+          )
           : const BusyState(),
     );
   }
@@ -82,7 +80,14 @@ class _ImageCardList extends StatelessWidget {
         int index,
       ) {
         return InkWell(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoryDetail())),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CategoryDetail(
+                category: _categories![index]!,
+              ),
+            ),
+          ),
           child: _ImageCard(
             category: _categories![index]!,
           ),
@@ -114,7 +119,7 @@ class _ImageCard extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.009,
+            height: context.height * 0.009,
           ),
           _ImageTitle(
             imageText: category.name!,
@@ -167,7 +172,6 @@ class _ImageTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _textScaleFactor = MediaQuery.of(context).textScaleFactor;
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: 2,
@@ -176,7 +180,7 @@ class _ImageTitle extends StatelessWidget {
         imageText,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: _textScaleFactor * 18,
+          fontSize: context.textScaleFactor * 18,
         ),
         maxLines: 3,
         overflow: TextOverflow.ellipsis,

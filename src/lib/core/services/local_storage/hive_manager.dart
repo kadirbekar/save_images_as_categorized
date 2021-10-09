@@ -8,13 +8,13 @@ class HiveManager {
   static HiveManager? _instance;
   static HiveManager get instance => _instance ??= HiveManager._initialize();
 
-  final String _image = "Image";
-  get image => _image;
+  final String _imageList = "imageList";
+  get image => _imageList;
 
   Future<void> initializeHive() async {
     final Directory _documentDirectory = await getApplicationDocumentsDirectory();
     Hive.init(_documentDirectory.path);
-    await Hive.openBox<String>(_image);
+    await Hive.openBox<String>(_imageList);
   }
 
   Future<T?> getData<T>(String box, dynamic key) async {

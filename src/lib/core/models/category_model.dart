@@ -1,18 +1,15 @@
-import 'package:flutter/material.dart';
-
 class CategoryModel {
+  const CategoryModel({
+    required this.id,
+    required this.name,
+    required this.bannerUrl,
+    required this.images,
+  });
 
   final int? id;
   final String? name;
   final String? bannerUrl;
   final List<ImageModel>? images;
-
-  const CategoryModel({
-    @required this.id,
-    @required this.name,
-    @required this.images,
-    @required this.bannerUrl
-  });
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) => CategoryModel(
         id: json["id"],
@@ -28,6 +25,7 @@ class CategoryModel {
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
+        "bannerUrl": bannerUrl,
         "images": List<dynamic>.from(
           images!.map(
             (x) => x.toJson(),
@@ -37,14 +35,13 @@ class CategoryModel {
 }
 
 class ImageModel {
-  
-  final String? path;
-  final String? addedDate;
-
   const ImageModel({
     this.path,
     this.addedDate,
   });
+
+  final String? path;
+  final String? addedDate;
 
   factory ImageModel.fromJson(Map<String, dynamic> json) => ImageModel(
         path: json["path"],
