@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:save_images_as_categorized/core/constants/string_constants.dart';
 import 'package:save_images_as_categorized/core/extensions/context_extension.dart';
 import 'package:save_images_as_categorized/core/models/category_model.dart';
 import 'package:save_images_as_categorized/core/reusable_widgets/empty_state.dart';
-import 'package:save_images_as_categorized/core/services/local_storage/hive_manager.dart';
 
 class CategoryDetail extends StatefulWidget {
   const CategoryDetail({
@@ -20,30 +21,6 @@ class CategoryDetail extends StatefulWidget {
 }
 
 class _CategoryDetailState extends State<CategoryDetail> {
-  ValueNotifier<List<String>>? _savedImagePathList;
-
-  @override
-  void initState() {
-    super.initState();
-    _savedImagePathList?.value = <String>[];
-    _savedImagePathList?.value = _runAsyncMethod();
-  }
-
-  _runAsyncMethod() async {
-    widget.category.images?.forEach((image) {
-      _savedImagePathList?.value.add(image.path!);
-    });
-    _updateStateIfMounted();
-  }
-
-  _updateStateIfMounted() => mounted ? setState(() {}) : null;
-
-  @override
-  void dispose() {
-    _savedImagePathList?.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final _appbar = AppBar(
@@ -56,51 +33,58 @@ class _CategoryDetailState extends State<CategoryDetail> {
     );
 
     return Scaffold(
-      floatingActionButton: _AddImage(widget: widget),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            heroTag: "Gallery",
+            backgroundColor: Colors.green,
+            onPressed: () async => _pickImage(ImageSource.gallery),
+            child: const Icon(
+              Icons.sd_storage_rounded,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 15),
+          FloatingActionButton(
+            heroTag: "Camera",
+            backgroundColor: Colors.green,
+            onPressed: () async => _pickImage(ImageSource.camera),
+            child: const Icon(
+              Icons.add_a_photo,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
       appBar: _appbar,
-      body: _savedImagePathList?.value != null
-          ? ValueListenableBuilder(
-              valueListenable: _savedImagePathList!,
-              builder: (context, List<String> imageList, widget) {
-                return _BuildCategorizedImageList(
-                  imageList: imageList,
-                );
-              },
-            )
-          : const EmptyState(),
+      body: widget.category.images != null
+          ? (widget.category.images!.isNotEmpty
+              ? _BuildCategorizedImageList(
+                  imageList: widget.category.images,
+                )
+              : const EmptyState())
+          : const SizedBox.shrink(),
     );
   }
-}
 
-class _AddImage extends StatelessWidget {
-  const _AddImage({
-    Key? key,
-    required this.widget,
-  }) : super(key: key);
-
-  final CategoryDetail widget;
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      backgroundColor: Colors.green,
-      onPressed: () async {
-        final _image = await ImagePicker().pickImage(
-          source: ImageSource.gallery,
-        );
-
-        if (_image != null) {
-          await HiveManager.instance.addData(
-            "${HiveManager.instance.image}",
-            _image.path,
-          );
-        }
-      },
-      child: const Icon(
-        Icons.add_a_photo,
-        color: Colors.white,
-      ),
+  _pickImage(ImageSource source) async {
+    final _image = await ImagePicker().pickImage(
+      source: source,
     );
+
+    if (_image != null) {
+      setState(
+        () {
+          widget.category.images?.add(
+            ImageModel(
+              addedDate: DateTime.now().toString(),
+              path: _image.path,
+            ),
+          );
+        },
+      );
+    }
   }
 }
 
@@ -111,38 +95,86 @@ class _BuildCategorizedImageList extends StatelessWidget {
   })  : _imageList = imageList,
         super(key: key);
 
-  final String _imageList;
+  final List<ImageModel> _imageList;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return StaggeredGridView.countBuilder(
+      mainAxisSpacing: 4.0,
+      crossAxisSpacing: 4.0,
       itemCount: _imageList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          margin: const EdgeInsets.all(12),
-          color: Colors.orange,
-          child: Row(
+      crossAxisCount: 4,
+      itemBuilder: (
+        BuildContext context,
+        int index,
+      ) {
+        return Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Column(
             children: [
-              Card(
-                child: Image.file(
-                  File(
-                    _imageList[index],
-                  ),
-                  fit: BoxFit.contain,
-                  height: context.height * 0.20,
-                  width: context.width * 0.50,
-                ),
-              ),
-              const Center(
-                child: Text(
-                  "Added Date : ",
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              _ImageAddedDateText(addedDate: _imageList[index].addedDate!),
+              _Image(imagePath: _imageList[index].path!),
             ],
           ),
         );
       },
+      staggeredTileBuilder: (int index) => const StaggeredTile.count(2, 2),
+    );
+  }
+}
+
+class _Image extends StatelessWidget {
+  const _Image({
+    Key? key,
+    required this.imagePath,
+  }) : super(key: key);
+
+  final String imagePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Image.file(
+            File(
+              imagePath,
+            ),
+            fit: BoxFit.cover,
+            height: context.height * 0.35,
+            width: context.width * 0.35,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ImageAddedDateText extends StatelessWidget {
+  const _ImageAddedDateText({
+    Key? key,
+    required this.addedDate,
+  }) : super(key: key);
+
+  final String addedDate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.green,
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Text(
+          StringConstants.formatter.format(
+            DateTime.parse(
+              addedDate,
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+      ),
     );
   }
 }
