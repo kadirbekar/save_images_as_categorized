@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+
 import 'package:save_images_as_categorized/core/constants/design_constants.dart';
 import 'package:save_images_as_categorized/core/constants/string_constants.dart';
 import 'package:save_images_as_categorized/core/extensions/context_extension.dart';
 import 'package:save_images_as_categorized/core/models/category_model.dart';
 import 'package:save_images_as_categorized/core/reusable_widgets/busy_state.dart';
+import 'package:save_images_as_categorized/core/services/file_service/file_service.dart';
 import 'package:save_images_as_categorized/core/services/json_service/json_service.dart';
 import 'package:save_images_as_categorized/view/category_detail.dart';
 
@@ -46,7 +48,10 @@ class _HomePageState extends State<HomePage> {
       ),
       actions: [
         TextButton(
-          onPressed: () {},
+          onPressed: () async => FileService.instance.createFolder(
+            rootFolderName: "images",
+            subFolders: _imageCategoryList
+          ),
           child: Text(
             "Archive",
             style: TextStyle(
