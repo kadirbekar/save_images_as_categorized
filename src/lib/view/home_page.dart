@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   _loadCategoryList() async =>
-      await LocalJsonDataService.instance.loadCategorieJsonFromAssets();
+      await LocalJsonDataService.instance.loadCategoryJsonFromAssets();
 
   _updateStateIfMounted(f) => mounted ? setState(f) : null;
 
@@ -40,11 +40,22 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final _appbar = AppBar(
       elevation: 0.0,
-      centerTitle: true,
       backgroundColor: Colors.green,
       title: const Text(
         StringConstants.mainTitle,
       ),
+      actions: [
+        TextButton(
+          onPressed: () {},
+          child: Text(
+            "Archive",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18 * context.textScaleFactor,
+            ),
+          ),
+        ),
+      ],
     );
 
     return Scaffold(
@@ -52,8 +63,8 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.green,
       body: _imageCategoryList!.isNotEmpty
           ? _ImageCardList(
-            categories: _imageCategoryList,
-          )
+              categories: _imageCategoryList,
+            )
           : const BusyState(),
     );
   }

@@ -50,8 +50,8 @@ class _CategoryDetailState extends State<CategoryDetail> {
       elevation: 0.0,
       centerTitle: true,
       backgroundColor: Colors.green,
-      title: const Text(
-        "Saved Images",
+      title: Text(
+        widget.category.name!,
       ),
     );
 
@@ -91,7 +91,7 @@ class _AddImage extends StatelessWidget {
 
         if (_image != null) {
           await HiveManager.instance.addData(
-            "${widget.category.id}",
+            "${HiveManager.instance.image}",
             _image.path,
           );
         }

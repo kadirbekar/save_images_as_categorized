@@ -9,7 +9,7 @@ class LocalJsonDataService {
   static LocalJsonDataService? _instance;
   static LocalJsonDataService get instance => _instance ??= LocalJsonDataService._initialize();
   
-  Future<List<CategoryModel>> loadCategorieJsonFromAssets() async {
+  Future<List<CategoryModel>> loadCategoryJsonFromAssets() async {
     final String _categoryListAsString = await rootBundle.loadString(
       StringConstants.localCategoriesJsonFilePath,
     );
