@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
         TextButton(
           onPressed: () async => FileService.instance.createFolder(
             rootFolderName: "images",
-            subFolders: _imageCategoryList
+            categoryList: _imageCategoryList
           ),
           child: Text(
             "Archive",

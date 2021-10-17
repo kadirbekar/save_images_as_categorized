@@ -112,8 +112,12 @@ class _BuildCategorizedImageList extends StatelessWidget {
           padding: const EdgeInsets.all(4.0),
           child: Column(
             children: [
-              _ImageAddedDateText(addedDate: _imageList[index].addedDate!),
-              _Image(imagePath: _imageList[index].path!),
+              _ImageAddedDateText(
+                addedDate: _imageList[index].addedDate!,
+              ),
+              _Image(
+                imagePath: _imageList[index].path!,
+              ),
             ],
           ),
         );
@@ -145,6 +149,7 @@ class _Image extends StatelessWidget {
             fit: BoxFit.cover,
             height: context.height * 0.35,
             width: context.width * 0.35,
+            filterQuality: FilterQuality.high,
           ),
         ),
       ),
@@ -172,7 +177,9 @@ class _ImageAddedDateText extends StatelessWidget {
               addedDate,
             ),
           ),
-          style: const TextStyle(color: Colors.white),
+          style: const TextStyle(
+            color: Colors.white,
+          ),
         ),
       ),
     );
