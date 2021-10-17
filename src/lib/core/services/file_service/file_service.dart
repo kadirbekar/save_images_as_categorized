@@ -14,7 +14,8 @@ class FileService {
     required String rootFolderName,
     required List<CategoryModel?>? categoryList,
   }) async {
-    _appDocumentDirectory = await getExternalStorageDirectory();
+    _appDocumentDirectory = await _getPlatformSpecificDirectory();
+    
     final Directory _rootFolder = Directory("${_appDocumentDirectory?.path}/$rootFolderName");
     if (!await _rootFolder.exists()) {
       await _rootFolder.create(recursive: true);
@@ -25,13 +26,18 @@ class FileService {
     );
   }
 
+  Future<Directory?> _getPlatformSpecificDirectory() async {
+    return Platform.isAndroid ? 
+      await getExternalStorageDirectory() : await getApplicationDocumentsDirectory();
+  }
+
   void _createPerImageCategoryFolder({
     required String rootFolderName,
     required List<CategoryModel?>? categoryList,
   }) {
     categoryList?.forEach(
       (category) async {
-        final _imageCategoryFolderPath = "${_appDocumentDirectory?.path}/$rootFolderName/${category?.id}";
+        final String _imageCategoryFolderPath = "${_appDocumentDirectory?.path}/$rootFolderName/${category?.id}";
         final Directory _categoryFolderName = Directory(_imageCategoryFolderPath);
         if (!await _categoryFolderName.exists()) {
           await _categoryFolderName.create(recursive: true);
@@ -53,7 +59,7 @@ class FileService {
   }) async {
     const _applicationDataFolderDirectory = "/data/user/0/com.example.save_images_as_categorized/cache/";
     final File _imageFile = File(path!);
-    final _imageName = _imageFile.toString().split(_applicationDataFolderDirectory)[1].split("'")[0];
+    final String _imageName = _imageFile.toString().split(_applicationDataFolderDirectory)[1].split("'")[0];
     await _imageFile.copy("$folderDirectory/$_imageName");
   }
 
